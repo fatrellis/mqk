@@ -11,6 +11,7 @@ use MQK\Exception\TestTimeoutException;
 use MQK\Job\JobDAO;
 use MQK\LoggerFactory;
 use MQK\PIPE;
+use MQK\Queue\MessageFactory;
 use MQK\Queue\Queue;
 use MQK\Queue\QueueCollection;
 use MQK\Queue\RedisQueue;
@@ -97,6 +98,12 @@ class WorkerConsumer extends AbstractWorker implements Worker
      */
     protected $pipe;
 
+
+    /**
+     * @var MessageFactory
+     */
+    protected $messageFactory;
+
     public function __construct(Config $config, $queues, PIPE $pipe)
     {
         parent::__construct();
@@ -104,6 +111,7 @@ class WorkerConsumer extends AbstractWorker implements Worker
         $this->config = $config;
         $this->queueNameList = $queues;
         $this->pipe = $pipe;
+        $this->messageFactory = new MessageFactory();
     }
 
     public function run()
@@ -163,7 +171,9 @@ class WorkerConsumer extends AbstractWorker implements Worker
     {
         while (true) {
             try {
-                $job = $this->queues->dequeue(!$this->config->burst());
+                $message = $this->queues->dequeue(!$this->config->burst());
+                $job = $this->messageFactory->createJob($message);
+
                 break;
             } catch (\RedisException $e) {
                 $this->logger->error($e);
@@ -189,7 +199,10 @@ class WorkerConsumer extends AbstractWorker implements Worker
             $this->logger->info("retries {$job->retries()}");
             $arguments = $job->arguments();
             $beforeExecute = time();
-            $result = @call_user_func_array($job->func(), $arguments);
+            
+//            $result = @call_user_func_array($job->func(), $arguments);
+
+            $result = $job->invoke();
 
             $error = error_get_last();
             error_clear_last();

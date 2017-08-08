@@ -3,7 +3,7 @@ namespace MQK\Command;
 
 use Monolog\Logger;
 use MQK\Config;
-use MQK\Job;
+use MQK\CallableJob;
 use MQK\LoggerFactory;
 use MQK\Queue\QueueFactory;
 use MQK\RedisFactory;
@@ -123,7 +123,7 @@ class ProduceWorker extends AbstractWorker
 
         for ($i = 0; $i < $this->numbers; $i++) {
 
-            $job = new Job(null, $this->funcName, $this->arguments);
+            $job = new CallableJob(null, $this->funcName, $this->arguments);
             $job->setConnection($redis);
             if (null != $this->ttl)
                 $job->setTtl($this->ttl);

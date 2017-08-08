@@ -1,5 +1,5 @@
 <?php
-use MQK\Job;
+use MQK\CallableJob;
 use MQK\Queue\Queue;
 use MQK\Queue\RedisQueue;
 
@@ -16,7 +16,7 @@ class K
 
     static function job($func, $args)
     {
-        $job = new Job(null, $func, $args);
+        $job = new CallableJob(null, $func, $args);
         $job->setConnection(self::defaultQueue()->connection());
 
         return $job;

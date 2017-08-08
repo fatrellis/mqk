@@ -1,7 +1,7 @@
 <?php
 namespace MQK\Queue;
 use MQK\Exception\QueueIsEmptyException;
-use MQK\Job;
+use MQK\CallableJob;
 use MQK\RedisFactory;
 
 /**
@@ -39,7 +39,7 @@ class TestQueueCollection implements QueueCollection
      *
      * @param Queue[] $queues
      *
-     * @return Job
+     * @return CallableJob
      */
     public function dequeue($block = true)
     {
@@ -48,7 +48,7 @@ class TestQueueCollection implements QueueCollection
         if ($this->index >= $this->max)
             throw new QueueIsEmptyException("");
         $jsonObject = json_decode($this->job);
-        return Job::job($jsonObject);
+        return CallableJob::job($jsonObject);
     }
 
     function testQPS()

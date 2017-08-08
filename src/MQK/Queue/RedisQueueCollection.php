@@ -3,7 +3,7 @@ namespace MQK\Queue;
 
 use Monolog\Logger;
 use MQK\Exception\QueueIsEmptyException;
-use MQK\Job;
+use MQK\CallableJob;
 use MQK\LoggerFactory;
 use MQK\RedisFactory;
 
@@ -105,16 +105,16 @@ class RedisQueueCollection implements QueueCollection
         if (count($raw) < 2) {
             throw new \Exception("queue data count less 2.");
         }
-        list($queueKey, $jobJson) = $raw;
+        list($queueKey, $messageJsonRaw) = $raw;
 
-        if (empty($jobJson))
+        if (empty($messageJsonRaw))
             return null;
         try {
-            $jsonObject = json_decode($jobJson);
+            $messageJson = json_decode($messageJsonRaw);
 //            $this->logger->debug("[dequeue] {$jsonObject->id}");
 //            $this->logger->debug($jobJson);
             // 100k 对象创建大概300ms，考虑是否可以利用对象池提高效率
-            $job = Job::job($jsonObject);
+            $job = CallableJob::job($messageJson);
         } catch (\Exception $e) {
             $job = null;
         }

@@ -34,7 +34,7 @@ class Registry
         $this->connection = $connection;
     }
 
-    public function start(Job $job)
+    public function start(CallableJob $job)
     {
         if (strpos($job->id(), "_") > -1) {
             $this->logger->debug("Name of job is invalid.");
@@ -53,13 +53,13 @@ class Registry
 //        $this->logger->info("{$job->id()} will at $ttl timeout.");
     }
 
-    public function fail(Job $job)
+    public function fail(CallableJob $job)
     {
         $ttl = time() + $job->ttl();
         $this->connection->zAdd("mqk:fail", $ttl, $job->id());
     }
 
-    public function finish(Job $job)
+    public function finish(CallableJob $job)
     {
         $ttl = time() + $job->ttl();
         // TODO: 后续在Slow模式加入成功的任务保存

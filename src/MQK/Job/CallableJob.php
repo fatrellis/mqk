@@ -3,7 +3,7 @@ namespace MQK;
 
 use MQK\Queue\Queue;
 
-class Job implements \JsonSerializable
+class CallableJob implements \JsonSerializable
 {
     /**
      * id
@@ -51,11 +51,16 @@ class Job implements \JsonSerializable
      */
     private $queue;
 
-    public function __construct($id, $func, $arguments)
+    /**
+     * @var Message
+     */
+    private $message;
+
+    public function __construct($message)
     {
-        $this->id = $id == null ? md5(rand()) : $id;
-        $this->func = $func;
-        $this->arguments = $arguments;
+//        $this->id = $id == null ? md5(rand()) : $id;
+//        $this->func = $func;
+//        $this->arguments = $arguments;
         $this->result = null;
     }
 
@@ -109,7 +114,7 @@ class Job implements \JsonSerializable
 
     public static function job($json)
     {
-        $job = new Job($json->id, $json->func, $json->arguments);
+        $job = new CallableJob($json->id, $json->func, $json->arguments);
         $job->setTtl($json->ttl);
         $job->setQueue($json->queue);
         if (property_exists($json,"retries"))
@@ -150,5 +155,20 @@ class Job implements \JsonSerializable
     public function queue()
     {
         return $this->queue;
+    }
+
+    public function message()
+    {
+        return $this->message;
+    }
+
+    public function setMessage($message)
+    {
+        $this->message = $message;
+    }
+
+    public function invoke()
+    {
+
     }
 }

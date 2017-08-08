@@ -7,7 +7,7 @@ use MQK\RedisFactory;
 use MQK\Queue\QueueFactory;
 use MQK\Worker\Worker;
 use MQK\Queue\Queue;
-use MQK\Job;
+use MQK\CallableJob;
 
 class WorkerTest extends TestCase
 {
@@ -54,7 +54,7 @@ class WorkerTest extends TestCase
      */
     public function testJobFailure()
     {
-        $job = new Job(null, "\\MQK\\Test\\Calculator::sumCrash", [1, 1]);
+        $job = new CallableJob(null, "\\MQK\\Test\\Calculator::sumCrash", [1, 1]);
         $job->setTtl(0);
         $this->queue->enqueue($job);
         $worker = new WorkerConsumer(Config::defaultConfig(), [$this->queue]);

@@ -7,9 +7,9 @@ interface QueueCollection
     /**
      * 出队列
      *
-     * @param Queue[] $queues
+     * @param boolean block
      *
-     * @return Job
+     * @return Message
      */
     function dequeue($block=true);
 }

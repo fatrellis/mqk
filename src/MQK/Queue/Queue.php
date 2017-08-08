@@ -1,7 +1,7 @@
 <?php
 namespace MQK\Queue;
 
-use MQK\Job;
+use MQK\CallableJob;
 
 /**
  * 队列接口
@@ -13,10 +13,10 @@ interface Queue
     /**
      * 进入队列
      *
-     * @param Job $job
+     * @param Message $message
      * @return void
      */
-    function enqueue(Job $job);
+    function enqueue(Message $message);
 
     function name();
 

@@ -3,7 +3,7 @@ namespace MQK\Job;
 
 use Connection\RedisConnectionProxy;
 use Monolog\Logger;
-use MQK\Job;
+use MQK\CallableJob;
 use MQK\LoggerFactory;
 
 class JobDAO
@@ -26,7 +26,7 @@ class JobDAO
 
     /**
      * @param $id
-     * @return Job
+     * @return CallableJob
      */
     public function find($id)
     {
@@ -36,10 +36,10 @@ class JobDAO
             throw new \Exception("Job {$id} not found.");
         }
         $jsonObject = json_decode($raw);
-        return Job::job($jsonObject);
+        return CallableJob::job($jsonObject);
     }
 
-    public function store(Job $job)
+    public function store(CallableJob $job)
     {
         $raw = json_encode($job->jsonSerialize());
         $this->connection->set("job:", $job->id(), $raw);

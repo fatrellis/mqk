@@ -3,7 +3,7 @@ namespace MQK\Queue;
 
 use Connection\Connection;
 use Monolog\Logger;
-use MQK\Job;
+use MQK\CallableJob;
 use MQK\LoggerFactory;
 
 class RedisQueue implements Queue
@@ -45,7 +45,7 @@ class RedisQueue implements Queue
         return "queue_{$this->name}";
     }
 
-    public function enqueue(Job $job)
+    public function enqueue(CallableJob $job)
     {
         if (strpos($job->id(), "_")) {
             $this->logger->error("[enqueue] {$job->id()} contains _", debug_backtrace());

@@ -2,17 +2,17 @@
 namespace MQK\Exception;
 
 
-use MQK\Job;
+use MQK\CallableJob;
 use Throwable;
 
 class JobMaxRetriesException extends \Exception
 {
     /**
-     * @var Job
+     * @var CallableJob
      */
     private $job;
 
-    public function __construct(Job $job, Throwable $previous = null)
+    public function __construct(CallableJob $job, Throwable $previous = null)
     {
         $this->job = $job;
         parent::__construct("", 0, $previous);
